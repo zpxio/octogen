@@ -105,7 +105,7 @@ func (s *Selector) MatchesToken(t *Token) bool {
 	}
 
 	// Check Exists
-	for k, _ := range s.Exists {
+	for k := range s.Exists {
 		_, exists := t.Tags[k]
 		if !exists {
 			return false
