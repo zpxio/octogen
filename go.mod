@@ -1,4 +1,4 @@
-module github.com/zpxio/heromanager
+module github.com/zpxio/octogen
 
 go 1.13
 
