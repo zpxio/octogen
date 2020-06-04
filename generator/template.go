@@ -28,7 +28,7 @@ const RoundsMax = uint8(30)
 var selectorRegex *regexp.Regexp
 
 func init() {
-	selectorRegex = regexp.MustCompile(`\[(\w+)(:((,?(\w+(\!?=\w+)?)?)+))?]`)
+	selectorRegex = regexp.MustCompile(`\[(\w+)(:((,?(\w+(!?=\w+)?)?)+))?]`)
 }
 
 type Template struct {
