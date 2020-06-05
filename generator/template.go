@@ -26,9 +26,11 @@ import (
 const RoundsMax = uint8(30)
 
 var selectorRegex *regexp.Regexp
+var varRegex *regexp.Regexp
 
 func init() {
 	selectorRegex = regexp.MustCompile(`\[(\w+)(:((,?(\w+(!?=\w+)?)?)+))?]`)
+	varRegex = regexp.MustCompile(`\[\$(\w+)]`)
 }
 
 type Template struct {
@@ -43,7 +45,7 @@ func InitTemplate(t string) *Template {
 	}
 }
 
-func (t *Template) replaceNextToken(i *Inventory, offset float64) bool {
+func (t *Template) replaceNextToken(i *Inventory, s *State, offset float64) bool {
 	// Find the next token
 	matches := selectorRegex.FindStringSubmatch(t.working)
 
@@ -66,12 +68,45 @@ func (t *Template) replaceNextToken(i *Inventory, offset float64) bool {
 	return true
 }
 
-func (t *Template) Render(i *Inventory, source rng.RandomSource) string {
+func (t *Template) replaceNextVar(s *State) bool {
+	matches := varRegex.FindAllStringSubmatch(t.working, 20)
+
+	if matches == nil {
+		log.Infof("Found no variable matches")
+		return false
+	}
+
+	for _, m := range matches {
+		tag := m[0]
+		varName := m[1]
+
+		val := s.Vars[varName]
+		log.Infof("Found Var reference: %s=%s", varName, val)
+		if val != "" {
+			t.working = strings.Replace(t.working, tag, val, 1)
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t *Template) Render(i *Inventory, state *State, source rng.RandomSource) string {
 	replaced := true
 
-	// Replace until there's nothing left to replace or you exceed the replacement count
-	for replaced && t.rounds > 0 {
-		replaced = t.replaceNextToken(i, source.Next())
+	// Keep trying until there aren't changes or all the rounds are expended
+	for t.rounds > 0 {
+		// Try to replace tokens
+		replaced = t.replaceNextToken(i, state, source.Next())
+
+		// Try to replace variables if no tokens were replaced
+		if !replaced {
+			replaced = t.replaceNextVar(state)
+		}
+
+		if !replaced {
+			t.rounds -= 1
+		}
 	}
 
 	return t.working

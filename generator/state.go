@@ -16,24 +16,18 @@
 
 package generator
 
-type Token struct {
-	Id      string
-	Content string
-	Rarity  float64
-	Tags    map[string]string
-	SetVars map[string]string
+type State struct {
+	Vars map[string]string
 }
 
-type Tags map[string]string
-
-func BuildToken(id string, content string, rarity float64, tags Tags) Token {
-	t := Token{
-		Id:      id,
-		Content: content,
-		Rarity:  rarity,
-		Tags:    tags,
-		SetVars: make(map[string]string),
+func CreateState() *State {
+	return &State{
+		Vars: make(map[string]string),
 	}
+}
 
-	return t
+func (s *State) SetVars(v map[string]string) {
+	for varName, val := range v {
+		s.Vars[varName] = val
+	}
 }

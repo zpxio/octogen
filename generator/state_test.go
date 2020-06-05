@@ -16,24 +16,33 @@
 
 package generator
 
-type Token struct {
-	Id      string
-	Content string
-	Rarity  float64
-	Tags    map[string]string
-	SetVars map[string]string
+import (
+	"github.com/stretchr/testify/suite"
+	"testing"
+)
+
+type StateSuite struct {
+	suite.Suite
 }
 
-type Tags map[string]string
+func TestStateSuite(t *testing.T) {
+	suite.Run(t, new(StateSuite))
+}
 
-func BuildToken(id string, content string, rarity float64, tags Tags) Token {
-	t := Token{
-		Id:      id,
-		Content: content,
-		Rarity:  rarity,
-		Tags:    tags,
-		SetVars: make(map[string]string),
-	}
+func (s *StateSuite) TestCreateState() {
+	x := CreateState()
 
-	return t
+	s.Empty(x.Vars)
+}
+
+func (s *StateSuite) TestSetVars() {
+	x := CreateState()
+
+	vars := map[string]string{"A": "6", "B": "2"}
+	x.SetVars(vars)
+
+	s.NotEmpty(x.Vars)
+	s.Equal("6", x.Vars["A"])
+	s.Equal("2", x.Vars["B"])
+	s.Len(x.Vars, 2)
 }
