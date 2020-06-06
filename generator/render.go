@@ -23,7 +23,7 @@ import (
 	"strings"
 )
 
-// The maximum number of replacement rounds allowed during Rendering.
+// RoundsMax defines the maximum number of replacement rounds allowed during Rendering.
 const RoundsMax = uint8(30)
 
 var selectorRegex *regexp.Regexp

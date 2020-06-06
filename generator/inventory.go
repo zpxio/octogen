@@ -88,7 +88,7 @@ func (i *Inventory) Pick(selector *Selector, offset float64) *Token {
 
 	// Pick the first value that exceeds the offset value
 	selectValue := offset * selectRange
-	var lastToken *Token = nil
+	var lastToken *Token
 
 	for len(taggedList) > 0 && selectValue >= 0 {
 		lastToken = &taggedList[0]

@@ -24,13 +24,13 @@ import (
 var optRegex *regexp.Regexp
 
 const (
-	OptCategory = 1
-	OptValue    = 4
-	OptType     = 3
+	optCategory = 1
+	optValue    = 4
+	optType     = 3
 
-	OptTypeRequire = "="
-	OptTypeExclude = "!="
-	OptTypeExists  = ""
+	optTypeRequire = "="
+	optTypeExclude = "!="
+	optTypeExists  = ""
 )
 
 func init() {
@@ -63,15 +63,15 @@ func ParseSelector(category string, options string) *Selector {
 	log.Infof("Parsed Selector: %#v", parseGroups)
 
 	for _, group := range parseGroups {
-		switch group[OptType] {
-		case OptTypeExists:
-			s.Exists[group[OptCategory]] = true
+		switch group[optType] {
+		case optTypeExists:
+			s.Exists[group[optCategory]] = true
 			break
-		case OptTypeRequire:
-			s.Require[group[OptCategory]] = group[OptValue]
+		case optTypeRequire:
+			s.Require[group[optCategory]] = group[optValue]
 			break
-		case OptTypeExclude:
-			s.Exclude[group[OptCategory]] = group[OptValue]
+		case optTypeExclude:
+			s.Exclude[group[optCategory]] = group[optValue]
 			break
 		}
 	}
