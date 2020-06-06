@@ -17,17 +17,19 @@
 package generator
 
 import (
-	"github.com/apex/log"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
 
+// Type Inventory acts as a collection of categorized Tokens which can be queried for both randomized
+// and parameterized selection.
 type Inventory struct {
 	dictionary  map[string][]Token
 	selectRange map[string]float64
 }
 
+// CreateInventory creates a new, empty Inventory.
 func CreateInventory() *Inventory {
 	i := Inventory{
 		dictionary:  make(map[string][]Token),
@@ -37,23 +39,26 @@ func CreateInventory() *Inventory {
 	return &i
 }
 
+// AddToken creates and adds a new Token to this Inventory. The created token is returned to support
+// chaining and to make it interchangeable with Add.
 func (i *Inventory) AddToken(id string, content string, rarity float64, tags map[string]string) *Token {
 	x := BuildToken(id, content, rarity, tags)
 
-	i.Add(x)
-
-	return &x
+	return i.Add(x)
 }
 
+// Add adds an existing Token to this Inventory. The added token is returned, to help support chaining
+// and make it interchangeable with AddToken.
 func (i *Inventory) Add(t Token) *Token {
-	i.dictionary[t.Id] = append(i.dictionary[t.Id], t)
-	i.selectRange[t.Id] += t.Rarity
+	i.dictionary[t.Category] = append(i.dictionary[t.Category], t)
+	i.selectRange[t.Category] += t.Rarity
 
 	return &t
 }
 
+// getTokens retrieves tokens that match the supplied Selector.
 func (i *Inventory) getTokens(selector *Selector) ([]Token, float64) {
-	idList, idFound := i.dictionary[selector.Id]
+	idList, idFound := i.dictionary[selector.Category]
 
 	if !idFound {
 		return []Token{}, 0.0
@@ -63,7 +68,7 @@ func (i *Inventory) getTokens(selector *Selector) ([]Token, float64) {
 	selectRange := 0.0
 
 	if selector.IsSimple() {
-		return idList, i.selectRange[selector.Id]
+		return idList, i.selectRange[selector.Category]
 	}
 
 	for _, x := range idList {
@@ -76,13 +81,13 @@ func (i *Inventory) getTokens(selector *Selector) ([]Token, float64) {
 	return taggedList, selectRange
 }
 
+// Pick selects a random Token from the inventory which matches the given Selector. If no matching
+// Tokens are found, then nil is returned.
 func (i *Inventory) Pick(selector *Selector, offset float64) *Token {
 	taggedList, selectRange := i.getTokens(selector)
-	log.Infof("Selected tokens: %#v", taggedList)
 
 	// Pick the first value that exceeds the offset value
 	selectValue := offset * selectRange
-	log.Infof("Selecting Weight Index: %f", selectValue)
 	var lastToken *Token = nil
 
 	for len(taggedList) > 0 && selectValue >= 0 {
@@ -90,12 +95,12 @@ func (i *Inventory) Pick(selector *Selector, offset float64) *Token {
 		taggedList = taggedList[1:]
 
 		selectValue -= lastToken.Rarity
-		log.Infof("Now selecting up to: %f", selectValue)
 	}
 
 	return lastToken
 }
 
+// Load adds Tokens to the Inventory from a YAML file containing an array of Token definitions.
 func (i *Inventory) Load(path string) error {
 	// Read the file
 	data, err := ioutil.ReadFile(path)

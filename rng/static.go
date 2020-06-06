@@ -16,16 +16,20 @@
 
 package rng
 
+// Type StaticRand is a RandomSource that always returns the same value. This is a simple way of
+// supporting RandomSources for testing when a single static value is acceptable.
 type StaticRand struct {
 	value float64
 }
 
+// UseStatic creates a new StaticRand which will continually supply the given value.
 func UseStatic(v float64) *StaticRand {
 	return &StaticRand{
 		value: v,
 	}
 }
 
+// Next returns the statically defined random value.
 func (s *StaticRand) Next() float64 {
 	return s.value
 }

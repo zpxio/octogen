@@ -16,16 +16,26 @@
 
 package rng
 
+// Type ManualRand defines a RandomSource which is manually fed random values to be
+// retrieved. This is very useful for taking complete control of random number generation
+// for unit testing.
 type ManualRand struct {
 	values []float64
 }
 
-func UseManual() *ManualRand {
-	return &ManualRand{
+// UseManual creates a new ManualRand containing the supplied values.
+func UseManual(v ...float64) *ManualRand {
+	r := &ManualRand{
 		values: []float64{},
 	}
+
+	r.Add(v...)
+
+	return r
 }
 
+// Next retrieves the next value in the queue of random numbers. If no values have been stored in
+// buffer, then the function panics.
 func (r *ManualRand) Next() float64 {
 	if len(r.values) < 1 {
 		panic("attempt to read from empty random source")
@@ -37,10 +47,12 @@ func (r *ManualRand) Next() float64 {
 	return next
 }
 
+// Clear removes all stored values in the random queue.
 func (r *ManualRand) Clear() {
 	r.values = []float64{}
 }
 
+// Add adds new values to the queue of values to supply via the Next function.
 func (r *ManualRand) Add(v ...float64) {
 	r.values = append(r.values, v...)
 }

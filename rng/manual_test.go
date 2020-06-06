@@ -36,6 +36,16 @@ func (s *RngSuite) TestManualInit() {
 	s.Empty(r.values)
 }
 
+func (s *RngSuite) TestManualInit_WithValues() {
+	r := UseManual(0.1, 0.2, 0.3)
+
+	s.NotNil(r)
+	s.NotEmpty(r.values)
+	s.InDelta(0.1, r.Next(), 0.001)
+	s.InDelta(0.2, r.Next(), 0.001)
+	s.InDelta(0.3, r.Next(), 0.001)
+}
+
 func (s *RngSuite) TestPanicOnEmpty() {
 	r := UseManual()
 

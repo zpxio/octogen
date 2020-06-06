@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// Package generator contains functionality to generate randomized, structured text based on a
+// mixture of randomized selection and configured selections.
 package generator
 
 import "github.com/zpxio/octogen/rng"
@@ -24,6 +26,8 @@ type Generator struct {
 	rng          rng.RandomSource
 }
 
+// CreateGenerator creates a reusable text generator based on the instructions provided and the
+// given inventory. Each time the generator is used, it can potentially produce different output.
 func CreateGenerator(instructions string, inventory *Inventory) *Generator {
 	g := &Generator{
 		instructions: instructions,
@@ -34,20 +38,22 @@ func CreateGenerator(instructions string, inventory *Inventory) *Generator {
 	return g
 }
 
+// Run executes the generator with a new empty State.
 func (g *Generator) Run() string {
 	state := CreateState()
 
-	result := Render(g.instructions, g.inventory, state, g.rng)
-
-	return result
+	return g.RunWithState(state)
 }
 
+// RunWithState executes the generator with the supplied State. This function is used to execute Generators
+// with pre-defined state for instruction sets that require variable substitution.
 func (g *Generator) RunWithState(state *State) string {
 	result := Render(g.instructions, g.inventory, state, g.rng)
 
 	return result
 }
 
+// UseRandomSource assigns a RandomSource to use when picking tokens.
 func (g *Generator) UseRandomSource(rng rng.RandomSource) {
 	g.rng = rng
 }

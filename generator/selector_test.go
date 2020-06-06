@@ -36,7 +36,7 @@ func (s *SelectorSuite) TestParseSelector_Simple() {
 	x := ParseSelector(testId, "type=mammal,env!=water,enabled")
 
 	s.NotNil(x)
-	s.Equal(testId, x.Id)
+	s.Equal(testId, x.Category)
 
 	s.Contains(x.Require, "type")
 	s.Equal("mammal", x.Require["type"])
@@ -73,89 +73,89 @@ func (s *SelectorSuite) TestIsSimple_HasExists() {
 func (s *SelectorSuite) TestMatchesToken_IdOnly() {
 	x := ParseSelector("animal", "")
 
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{})
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_SingleRequire() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type=mammal")
 
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_MultiRequire() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type=mammal,family=antelope")
 
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_SingleRequire_Mismatch() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type=fish")
 
 	s.False(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_MultiRequire_MixedMismatch() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type=mammal,family=prosimian")
 
 	s.False(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_SingleRestrict() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type!=fish")
 
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_MultiRestrict() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type!=fish,family!=mustelid")
 
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_SingleRestrict_Mismatch() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type!=mammal")
 
 	s.False(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_MultiRestrict_MixedMismatch() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "type!=fish,family!=antelope")
 
 	s.False(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_SingleExists() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "extant")
 
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_MultiExists() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "family,extant")
 
 	s.True(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_SingleExists_Mismatch() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "prey")
 
 	s.False(x.MatchesToken(&t))
 }
 
 func (s *SelectorSuite) TestMatchesToken_MultiExists_MixedMismatch() {
-	t := BuildToken("animal", "Gemsbok", 1.0, Tags{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
+	t := BuildToken("animal", "Gemsbok", 1.0, Properties{"type": "mammal", "continent": "africa", "family": "antelope", "extant": ""})
 	x := ParseSelector("animal", "extant,robotic")
 
 	s.False(x.MatchesToken(&t))

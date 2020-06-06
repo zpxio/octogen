@@ -18,16 +18,20 @@ package generator
 
 import "github.com/apex/log"
 
+// Type State includes configurable state that can be used to configure individual executions of
+// a Generator.
 type State struct {
 	Vars map[string]string
 }
 
+// CreateState builds a new, empty State.
 func CreateState() *State {
 	return &State{
 		Vars: make(map[string]string),
 	}
 }
 
+// SetVars sets the values of one or more variables based on the supplied map.
 func (s *State) SetVars(v map[string]string) {
 	for varName, val := range v {
 		s.Vars[varName] = val

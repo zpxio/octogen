@@ -18,13 +18,17 @@ package rng
 
 import "math/rand"
 
+// Type SystemRand defines a RandomSource that uses the native operating system's random number
+// generation.
 type SystemRand struct {
 }
 
+// UseSystem creates a new SystemRand.
 func UseSystem() *SystemRand {
 	return &SystemRand{}
 }
 
+// Next returns a new pseudo-random number from the operating systems random number source.
 func (s *SystemRand) Next() float64 {
 	return rand.Float64()
 }

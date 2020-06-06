@@ -1,41 +1,41 @@
 ---
-- id: Animal
+- category: Animal
   content: Aardvark
   rarity: 1.0
-  tags:
+  properties:
     type: mammal
     env: ground
     family: orycteropod
-- id: Animal
+- category: Animal
   content: Boomalope
   rarity: 0.4
-  tags:
+  properties:
     type: cryptid
     env: ground
     family: deer
-- id: Animal
+- category: Animal
   content: Capybara
   rarity: 2.0
-  tags:
+  properties:
     type: mammal
     env: ground
     family: rodent
-- id: Animal
+- category: Animal
   content: Cladoselache
   rarity: 1.8
-  tags:
+  properties:
     type: fish
     env: water
     family: shark
-- id: Animal
+- category: Animal
   rarity: 1.8
-  tags:
+  properties:
     type: fish
     env: water
     family: shark
 - content: Eurypterid
   rarity: 2.4
-  tags:
+  properties:
     type: insect
     env: water
     family: abomination
@@ -48,12 +48,12 @@
 - name: Crab
   count: 20
   speed: 4
-- id: AnimalType
+- category: AnimalType
   content: mammal
   rarity: 3.0
-- id: AnimalType
+- category: AnimalType
   content: fish
   rarity: 1.2
-- id: AnimalType
+- category: AnimalType
   content: cryptid
   rarity: 0.3

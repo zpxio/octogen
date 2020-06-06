@@ -52,7 +52,7 @@ func (s *InventorySuite) TestAdd_Simple() {
 	testId := "ID"
 	testContent := "Content"
 	testRarity := 3.2
-	tags := Tags{"A": "1", "B": "2"}
+	tags := Properties{"A": "1", "B": "2"}
 
 	i.AddToken(testId, testContent, testRarity, tags)
 
@@ -63,19 +63,19 @@ func (s *InventorySuite) TestAdd_Simple() {
 func BuildSampleInventory() *Inventory {
 	i := CreateInventory()
 
-	i.AddToken("Animal", "Aardvark", 1.0, Tags{"type": "mammal", "env": "ground", "family": "orycteropod"})
-	i.AddToken("Animal", "Boomalope", 2.0, Tags{"type": "cryptid", "env": "ground", "family": "deer"})
-	i.AddToken("Animal", "Capybara", 1.0, Tags{"type": "mammal", "env": "ground", "family": "rodent"})
-	i.AddToken("Animal", "Cladoselache", 2.5, Tags{"type": "fish", "env": "water", "family": "shark"})
+	i.AddToken("Animal", "Aardvark", 1.0, Properties{"type": "mammal", "env": "ground", "family": "orycteropod"})
+	i.AddToken("Animal", "Boomalope", 2.0, Properties{"type": "cryptid", "env": "ground", "family": "deer"})
+	i.AddToken("Animal", "Capybara", 1.0, Properties{"type": "mammal", "env": "ground", "family": "rodent"})
+	i.AddToken("Animal", "Cladoselache", 2.5, Properties{"type": "fish", "env": "water", "family": "shark"})
 
-	i.AddToken("Description", "Angry", 1.0, Tags{"tone": "negative"})
-	i.AddToken("Description", "Confused", 1.5, Tags{"tone": "negative"})
-	i.AddToken("Description", "Reluctant", 1.0, Tags{"tone": "neutral"})
-	i.AddToken("Description", "Happy", 2.5, Tags{"tone": "positive"})
+	i.AddToken("Description", "Angry", 1.0, Properties{"tone": "negative"})
+	i.AddToken("Description", "Confused", 1.5, Properties{"tone": "negative"})
+	i.AddToken("Description", "Reluctant", 1.0, Properties{"tone": "neutral"})
+	i.AddToken("Description", "Happy", 2.5, Properties{"tone": "positive"})
 
-	i.AddToken("AnimalType", "mammal", 3.0, Tags{})
-	i.AddToken("AnimalType", "fish", 1.2, Tags{})
-	i.AddToken("AnimalType", "cryptid", 3.0, Tags{})
+	i.AddToken("AnimalType", "mammal", 3.0, Properties{})
+	i.AddToken("AnimalType", "fish", 1.2, Properties{})
+	i.AddToken("AnimalType", "cryptid", 3.0, Properties{})
 
 	return i
 }

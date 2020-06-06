@@ -24,9 +24,9 @@ import (
 var optRegex *regexp.Regexp
 
 const (
-	OptId    = 1
-	OptValue = 4
-	OptType  = 3
+	OptCategory = 1
+	OptValue    = 4
+	OptType     = 3
 
 	OptTypeRequire = "="
 	OptTypeExclude = "!="
@@ -37,19 +37,22 @@ func init() {
 	optRegex = regexp.MustCompile(`(\w+)((!?=)(\w+))?`)
 }
 
+// Type Selector acts as a structured query for Tokens, describing the Category and required/excluded
+// characteristics necessary for selection.
 type Selector struct {
-	Id      string
-	Require map[string]string
-	Exclude map[string]string
-	Exists  map[string]bool
+	Category string
+	Require  map[string]string
+	Exclude  map[string]string
+	Exists   map[string]bool
 }
 
-func ParseSelector(id string, options string) *Selector {
+// ParseSelector examines string parts to create a new Selector.
+func ParseSelector(category string, options string) *Selector {
 	s := Selector{
-		Id:      id,
-		Require: make(map[string]string),
-		Exclude: make(map[string]string),
-		Exists:  make(map[string]bool),
+		Category: category,
+		Require:  make(map[string]string),
+		Exclude:  make(map[string]string),
+		Exists:   make(map[string]bool),
 	}
 
 	// Parse the options
@@ -62,13 +65,13 @@ func ParseSelector(id string, options string) *Selector {
 	for _, group := range parseGroups {
 		switch group[OptType] {
 		case OptTypeExists:
-			s.Exists[group[OptId]] = true
+			s.Exists[group[OptCategory]] = true
 			break
 		case OptTypeRequire:
-			s.Require[group[OptId]] = group[OptValue]
+			s.Require[group[OptCategory]] = group[OptValue]
 			break
 		case OptTypeExclude:
-			s.Exclude[group[OptId]] = group[OptValue]
+			s.Exclude[group[OptCategory]] = group[OptValue]
 			break
 		}
 	}
@@ -76,6 +79,7 @@ func ParseSelector(id string, options string) *Selector {
 	return &s
 }
 
+// IsSimple checks to see if the Selector only selects based upon its category.
 func (s *Selector) IsSimple() bool {
 	if len(s.Require) > 0 {
 		return false
@@ -88,17 +92,18 @@ func (s *Selector) IsSimple() bool {
 	return true
 }
 
+// MatchesToken checks if the selector would select the supplied Token.
 func (s *Selector) MatchesToken(t *Token) bool {
 	// Check Require
 	for k, v := range s.Require {
-		if v != t.Tags[k] {
+		if v != t.Properties[k] {
 			return false
 		}
 	}
 
 	// Check Exclude
 	for k, v := range s.Exclude {
-		tv, exists := t.Tags[k]
+		tv, exists := t.Properties[k]
 		if exists && tv == v {
 			return false
 		}
@@ -106,7 +111,7 @@ func (s *Selector) MatchesToken(t *Token) bool {
 
 	// Check Exists
 	for k := range s.Exists {
-		_, exists := t.Tags[k]
+		_, exists := t.Properties[k]
 		if !exists {
 			return false
 		}

@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
+// Package rng defines a modular pseudo-random number generation library. The randomizing routines
+// are packaged into structs to allow them to be passed as function parameters. This provides better
+// support for testing as alternate implementations can be passed which produce "random" behavior which
+// is predictable enough for complex unit testing.
 package rng
 
+// Type RandomSource defines an interface which can be used to supply data to code performing
+// pseudo-random behaviors.
 type RandomSource interface {
+	// Next retrieves a psudo-random floatin-point number, such that 0 <= n < 1
 	Next() float64
 }

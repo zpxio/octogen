@@ -162,14 +162,14 @@ func (s *RenderSuite) TestRender_WithVarSet() {
 	t := "Example: [Animal:family=ape] Sentience: [$sentience]"
 	i := BuildSampleInventory()
 
-	t1 := i.AddToken("Animal", "Human", 1.0, Tags{"type": "mammal", "env": "land", "family": "ape"})
+	t1 := i.AddToken("Animal", "Human", 1.0, Properties{"type": "mammal", "env": "land", "family": "ape"})
 	t1.OnRenderSet("human", "normal")
 	t1.OnRenderSet("sentience", "full")
 
-	t2 := i.AddToken("Animal", "Chimpanzee", 1.0, Tags{"type": "mammal", "env": "land", "family": "ape"})
+	t2 := i.AddToken("Animal", "Chimpanzee", 1.0, Properties{"type": "mammal", "env": "land", "family": "ape"})
 	t2.OnRenderSet("sentience", "high")
 
-	t3 := i.AddToken("AnimalFamily", "ape", 1.0, Tags{"special": "true"})
+	t3 := i.AddToken("AnimalFamily", "ape", 1.0, Properties{"special": "true"})
 	t3.OnRenderSet("sentience", "moderate")
 
 	result1 := Render(t, i, CreateState(), rng.UseStatic(0))

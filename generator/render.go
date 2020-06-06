@@ -23,6 +23,7 @@ import (
 	"strings"
 )
 
+// The maximum number of replacement rounds allowed during Rendering.
 const RoundsMax = uint8(30)
 
 var selectorRegex *regexp.Regexp
@@ -33,6 +34,7 @@ func init() {
 	varRegex = regexp.MustCompile(`\[\$(\w+)]`)
 }
 
+// replaceNextToken replaces the first complete token found
 func replaceNextToken(working string, i *Inventory, s *State, source rng.RandomSource) (string, bool) {
 	// Find the next token
 	matches := selectorRegex.FindStringSubmatch(working)
@@ -57,6 +59,7 @@ func replaceNextToken(working string, i *Inventory, s *State, source rng.RandomS
 	return working, true
 }
 
+// replaceNextVar replaces the next variable found
 func replaceNextVar(working string, s *State) (string, bool) {
 	matches := varRegex.FindAllStringSubmatch(working, 20)
 
@@ -80,10 +83,14 @@ func replaceNextVar(working string, s *State) (string, bool) {
 	return working, false
 }
 
-func Render(base string, i *Inventory, state *State, source rng.RandomSource) string {
+// Render generates output from the supplied instruction string using the Inventory, State and RandomSource.
+// The instructions are rendered by replacing one element at a time, selecting the first complete Token or
+// first complete Variable found (in that order). Tokens or Variables which include other Token or Variable
+// references are considered invalid/incomplete and will be skipped.
+func Render(instruction string, i *Inventory, state *State, source rng.RandomSource) string {
 	replaced := true
 	rounds := RoundsMax
-	working := base
+	working := instruction
 
 	// Keep trying until there aren't changes or all the rounds are expended
 	for rounds > 0 {
