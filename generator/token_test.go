@@ -157,7 +157,7 @@ func (s *TokenSuite) TestNormalize_BadContent() {
 	t.Normalize()
 
 	s.Equal(testId, t.Id)
-	s.Equal("Content", t.Content)
+	s.Equal(testContent, t.Content)
 	s.Equal(testRarity, t.Rarity)
 }
 
