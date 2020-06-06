@@ -18,6 +18,8 @@ package generator
 
 import (
 	"github.com/stretchr/testify/suite"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -27,6 +29,15 @@ type InventorySuite struct {
 
 func TestInventorySuite(t *testing.T) {
 	suite.Run(t, new(InventorySuite))
+}
+
+func DataDir() string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic("Failed to look up current directory")
+	}
+	basedir := filepath.Dir(cwd)
+	return filepath.Join(basedir, "testdata")
 }
 
 func (s *InventorySuite) TestCreateInventory() {
@@ -130,4 +141,69 @@ func (s *InventorySuite) TestPick_NoMatchingTags() {
 	c := i.Pick(ParseSelector("Animal", "type=bird"), 0)
 
 	s.Nil(c)
+}
+
+func (s *InventorySuite) TestLoad_Simple() {
+	testFile := filepath.Join(DataDir(), "inv_animals.yml")
+
+	i := CreateInventory()
+
+	s.Empty(i.dictionary)
+
+	err := i.Load(testFile)
+
+	s.NoError(err)
+	s.Len(i.dictionary, 3)
+	s.Len(i.dictionary["Animal"], 4)
+	s.Len(i.dictionary["Description"], 4)
+	s.Len(i.dictionary["AnimalType"], 3)
+}
+
+func (s *InventorySuite) TestLoad_MissingFile() {
+	testFile := filepath.Join(DataDir(), "file_not_found.yml")
+
+	i := CreateInventory()
+	s.Empty(i.dictionary)
+
+	err := i.Load(testFile)
+
+	s.Error(err)
+}
+
+func (s *InventorySuite) TestLoad_BadFile() {
+	testFile := filepath.Join(DataDir(), "not_tokens.yml")
+
+	i := CreateInventory()
+	s.Empty(i.dictionary)
+
+	err := i.Load(testFile)
+
+	s.NoError(err)
+	s.Len(i.dictionary, 0)
+}
+
+func (s *InventorySuite) TestLoad_NotActuallyYaml() {
+	testFile := filepath.Join(DataDir(), "not_yaml.json")
+
+	i := CreateInventory()
+	s.Empty(i.dictionary)
+
+	err := i.Load(testFile)
+
+	s.Error(err)
+}
+
+func (s *InventorySuite) TestLoad_PartiallyBadFile() {
+	testFile := filepath.Join(DataDir(), "partially_bad.yml")
+
+	i := CreateInventory()
+	s.Empty(i.dictionary)
+
+	err := i.Load(testFile)
+
+	s.NoError(err)
+	s.Len(i.dictionary, 2)
+	s.Len(i.dictionary["Animal"], 4)
+	s.Len(i.dictionary["AnimalType"], 3)
+
 }

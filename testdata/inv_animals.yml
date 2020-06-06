@@ -1,0 +1,54 @@
+---
+- id: Animal
+  content: Aardvark
+  rarity: 1.0
+  tags:
+    type: mammal
+    env: ground
+    family: orycteropod
+- id: Animal
+  content: Boomalope
+  rarity: 0.4
+  tags:
+    type: cryptid
+    env: ground
+    family: deer
+- id: Animal
+  content: Capybara
+  rarity: 2.0
+  tags:
+    type: mammal
+    env: ground
+    family: rodent
+- id: Animal
+  content: Cladoselache
+  rarity: 1.8
+  tags:
+    type: fish
+    env: water
+    family: shark
+- id: Description
+  content: Angry
+  tags:
+    tone: negative
+- id: Description
+  content: Confused
+  tags:
+    tone: negative
+- id: Description
+  content: Reluctant
+  tags:
+    tone: neutral
+- id: Description
+  content: Happy
+  tags:
+    tone: positive
+- id: AnimalType
+  content: mammal
+  rarity: 3.0
+- id: AnimalType
+  content: fish
+  rarity: 1.2
+- id: AnimalType
+  content: cryptid
+  rarity: 0.3

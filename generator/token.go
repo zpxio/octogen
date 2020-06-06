@@ -16,6 +16,8 @@
 
 package generator
 
+import "strings"
+
 type Token struct {
 	Id      string
 	Content string
@@ -40,4 +42,27 @@ func BuildToken(id string, content string, rarity float64, tags Tags) Token {
 
 func (t *Token) OnRenderSet(variable string, value string) {
 	t.SetVars[variable] = value
+}
+
+func (t *Token) Normalize() {
+	t.Id = strings.TrimSpace(t.Id)
+	if t.Rarity <= 0.0 {
+		t.Rarity = 1.0
+	}
+}
+
+func (t *Token) IsValid() bool {
+	if t.Id == "" {
+		return false
+	}
+
+	if t.Content == "" {
+		return false
+	}
+
+	if t.Rarity <= 0.0 {
+		return false
+	}
+
+	return true
 }

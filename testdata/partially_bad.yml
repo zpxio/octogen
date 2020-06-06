@@ -1,0 +1,59 @@
+---
+- id: Animal
+  content: Aardvark
+  rarity: 1.0
+  tags:
+    type: mammal
+    env: ground
+    family: orycteropod
+- id: Animal
+  content: Boomalope
+  rarity: 0.4
+  tags:
+    type: cryptid
+    env: ground
+    family: deer
+- id: Animal
+  content: Capybara
+  rarity: 2.0
+  tags:
+    type: mammal
+    env: ground
+    family: rodent
+- id: Animal
+  content: Cladoselache
+  rarity: 1.8
+  tags:
+    type: fish
+    env: water
+    family: shark
+- id: Animal
+  rarity: 1.8
+  tags:
+    type: fish
+    env: water
+    family: shark
+- content: Eurypterid
+  rarity: 2.4
+  tags:
+    type: insect
+    env: water
+    family: abomination
+- name: Aardvark
+  count: 5
+  speed: 18
+- name: Baboon
+  count: 4
+  speed: 22
+- name: Crab
+  count: 20
+  speed: 4
+- id: AnimalType
+  content: mammal
+  rarity: 3.0
+- id: AnimalType
+  content: fish
+  rarity: 1.2
+- id: AnimalType
+  content: cryptid
+  rarity: 0.3

@@ -16,7 +16,12 @@
 
 package generator
 
-import "github.com/apex/log"
+import (
+	"github.com/apex/log"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+)
 
 type Inventory struct {
 	dictionary  map[string][]Token
@@ -89,4 +94,30 @@ func (i *Inventory) Pick(selector *Selector, offset float64) *Token {
 	}
 
 	return lastToken
+}
+
+func (i *Inventory) Load(path string) error {
+	// Read the file
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return errors.Wrap(err, "Failed to read inventory file.")
+	}
+
+	// Parse the YAML tokens
+	var tokens []Token
+	err = yaml.Unmarshal(data, &tokens)
+	if err != nil {
+		return errors.Wrap(err, "Failed to parse yaml file")
+	}
+
+	// Add all the tokens
+	for _, t := range tokens {
+		t.Normalize()
+
+		if t.IsValid() {
+			i.Add(t)
+		}
+	}
+
+	return nil
 }

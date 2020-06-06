@@ -42,3 +42,163 @@ func (s *TokenSuite) TestBuildInstruction_Simple() {
 	s.InDelta(testRarity, i.Rarity, 0.001)
 	s.Len(i.Tags, len(tags))
 }
+
+func (s *TokenSuite) TestIsValid_Happy() {
+	testId := "ID"
+	testContent := "Content"
+	testRarity := 3.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	i := BuildToken(testId, testContent, testRarity, tags)
+
+	s.True(i.IsValid())
+}
+
+func (s *TokenSuite) TestIsValid_NoId() {
+	testId := ""
+	testContent := "Content"
+	testRarity := 3.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	i := BuildToken(testId, testContent, testRarity, tags)
+
+	s.False(i.IsValid())
+}
+
+func (s *TokenSuite) TestIsValid_NoContent() {
+	testId := "ID"
+	testContent := ""
+	testRarity := 3.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	i := BuildToken(testId, testContent, testRarity, tags)
+
+	s.False(i.IsValid())
+}
+
+func (s *TokenSuite) TestIsValid_ZeroRarity() {
+	testId := "ID"
+	testContent := ""
+	testRarity := 0.0
+	tags := Tags{"A": "1", "B": "2"}
+
+	i := BuildToken(testId, testContent, testRarity, tags)
+
+	s.False(i.IsValid())
+}
+
+func (s *TokenSuite) TestIsValid_NegativeRarity() {
+	testId := "ID"
+	testContent := "Content"
+	testRarity := -1.0
+	tags := Tags{"A": "1", "B": "2"}
+
+	i := BuildToken(testId, testContent, testRarity, tags)
+
+	s.False(i.IsValid())
+}
+
+func (s *TokenSuite) TestNormalize_Noop() {
+	testId := "ID"
+	testContent := "Content"
+	testRarity := 3.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	t := Token{
+		Id:      testId,
+		Content: testContent,
+		Rarity:  testRarity,
+		Tags:    tags,
+		SetVars: make(map[string]string),
+	}
+
+	t.Normalize()
+
+	s.Equal(testId, t.Id)
+	s.Equal(testContent, t.Content)
+	s.Equal(testRarity, t.Rarity)
+}
+
+func (s *TokenSuite) TestNormalize_BadId() {
+	testId := "ID  "
+	testContent := "Content"
+	testRarity := 3.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	t := Token{
+		Id:      testId,
+		Content: testContent,
+		Rarity:  testRarity,
+		Tags:    tags,
+		SetVars: make(map[string]string),
+	}
+
+	t.Normalize()
+
+	s.Equal("ID", t.Id)
+	s.Equal(testContent, t.Content)
+	s.Equal(testRarity, t.Rarity)
+}
+
+func (s *TokenSuite) TestNormalize_BadContent() {
+	testId := "ID"
+	testContent := "    Content    "
+	testRarity := 3.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	t := Token{
+		Id:      testId,
+		Content: testContent,
+		Rarity:  testRarity,
+		Tags:    tags,
+		SetVars: make(map[string]string),
+	}
+
+	t.Normalize()
+
+	s.Equal(testId, t.Id)
+	s.Equal("Content", t.Content)
+	s.Equal(testRarity, t.Rarity)
+}
+
+func (s *TokenSuite) TestNormalize_ZeroRarity() {
+	testId := "ID"
+	testContent := "Content"
+	testRarity := 0.0
+	tags := Tags{"A": "1", "B": "2"}
+
+	t := Token{
+		Id:      testId,
+		Content: testContent,
+		Rarity:  testRarity,
+		Tags:    tags,
+		SetVars: make(map[string]string),
+	}
+
+	t.Normalize()
+
+	s.Equal(testId, t.Id)
+	s.Equal(testContent, t.Content)
+	s.Equal(1.0, t.Rarity)
+}
+
+func (s *TokenSuite) TestNormalize_NegativeRarity() {
+	testId := "ID"
+	testContent := "Content"
+	testRarity := -1.2
+	tags := Tags{"A": "1", "B": "2"}
+
+	t := Token{
+		Id:      testId,
+		Content: testContent,
+		Rarity:  testRarity,
+		Tags:    tags,
+		SetVars: make(map[string]string),
+	}
+
+	t.Normalize()
+
+	s.Equal(testId, t.Id)
+	s.Equal(testContent, t.Content)
+	s.Equal(1.0, t.Rarity)
+}
