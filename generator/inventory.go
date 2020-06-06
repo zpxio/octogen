@@ -22,7 +22,7 @@ import (
 	"io/ioutil"
 )
 
-// Type Inventory acts as a collection of categorized Tokens which can be queried for both randomized
+// Inventory acts as a collection of categorized Tokens which can be queried for both randomized
 // and parameterized selection.
 type Inventory struct {
 	dictionary  map[string][]Token

@@ -20,6 +20,8 @@ package generator
 
 import "github.com/zpxio/octogen/rng"
 
+// Generator is a reusable text generator which potentially produces different output each time
+// it is used.
 type Generator struct {
 	instructions string
 	inventory    *Inventory

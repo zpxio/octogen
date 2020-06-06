@@ -37,7 +37,7 @@ func init() {
 	optRegex = regexp.MustCompile(`(\w+)((!?=)(\w+))?`)
 }
 
-// Type Selector acts as a structured query for Tokens, describing the Category and required/excluded
+// Selector acts as a structured query for Tokens, describing the Category and required/excluded
 // characteristics necessary for selection.
 type Selector struct {
 	Category string

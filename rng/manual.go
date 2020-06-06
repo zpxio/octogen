@@ -16,7 +16,7 @@
 
 package rng
 
-// Type ManualRand defines a RandomSource which is manually fed random values to be
+// ManualRand defines a RandomSource which is manually fed random values to be
 // retrieved. This is very useful for taking complete control of random number generation
 // for unit testing.
 type ManualRand struct {

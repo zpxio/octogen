@@ -18,7 +18,7 @@ package generator
 
 import "strings"
 
-// Type Token represents a single item which can be placed into the generated output of a Generator.
+// Token represents a single item which can be placed into the generated output of a Generator.
 type Token struct {
 	Category   string
 	Content    string
@@ -27,9 +27,11 @@ type Token struct {
 	SetVars    map[string]string
 }
 
-// Type Properties defines the structure used to store token properties.
+// Properties defines the structure used to store token properties.
 type Properties map[string]string
 
+// BuildToken builds a new Token based upon the supplied information. No SetVars are defined. If
+// you want to set State variables on render, use OnRenderSet to define them.
 func BuildToken(category string, content string, rarity float64, tags Properties) Token {
 	t := Token{
 		Category:   category,

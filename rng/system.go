@@ -18,7 +18,7 @@ package rng
 
 import "math/rand"
 
-// Type SystemRand defines a RandomSource that uses the native operating system's random number
+// SystemRand defines a RandomSource that uses the native operating system's random number
 // generation.
 type SystemRand struct {
 }

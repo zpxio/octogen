@@ -16,7 +16,7 @@
 
 package rng
 
-// Type StaticRand is a RandomSource that always returns the same value. This is a simple way of
+// StaticRand is a RandomSource that always returns the same value. This is a simple way of
 // supporting RandomSources for testing when a single static value is acceptable.
 type StaticRand struct {
 	value float64

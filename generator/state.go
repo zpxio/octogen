@@ -18,7 +18,7 @@ package generator
 
 import "github.com/apex/log"
 
-// Type State includes configurable state that can be used to configure individual executions of
+// State includes configurable state that can be used to configure individual executions of
 // a Generator.
 type State struct {
 	Vars map[string]string

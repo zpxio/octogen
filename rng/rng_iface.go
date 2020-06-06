@@ -20,7 +20,7 @@
 // is predictable enough for complex unit testing.
 package rng
 
-// Type RandomSource defines an interface which can be used to supply data to code performing
+// RandomSource defines an interface which can be used to supply data to code performing
 // pseudo-random behaviors.
 type RandomSource interface {
 	// Next retrieves a psudo-random floatin-point number, such that 0 <= n < 1
