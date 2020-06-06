@@ -48,6 +48,7 @@ func (s *RenderSuite) TestReplaceNextToken_Multiple() {
 
 	working, replaced := replaceNextToken(t, i, x, rng.UseStatic(0))
 
+	s.True(replaced)
 	s.Equal("Example: Angry [Animal]", working)
 
 	working, replaced = replaceNextToken(working, i, x, rng.UseStatic(0))

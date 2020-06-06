@@ -88,7 +88,7 @@ func replaceNextVar(working string, s *State) (string, bool) {
 // first complete Variable found (in that order). Tokens or Variables which include other Token or Variable
 // references are considered invalid/incomplete and will be skipped.
 func Render(instruction string, i *Inventory, state *State, source rng.RandomSource) string {
-	replaced := true
+	var replaced bool
 	rounds := RoundsMax
 	working := instruction
 
