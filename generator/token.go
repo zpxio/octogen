@@ -37,3 +37,7 @@ func BuildToken(id string, content string, rarity float64, tags Tags) Token {
 
 	return t
 }
+
+func (t *Token) OnRenderSet(variable string, value string) {
+	t.SetVars[variable] = value
+}

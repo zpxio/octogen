@@ -43,34 +43,34 @@ func (s *InventorySuite) TestAdd_Simple() {
 	testRarity := 3.2
 	tags := Tags{"A": "1", "B": "2"}
 
-	i.Add(testId, testContent, testRarity, tags)
+	i.AddToken(testId, testContent, testRarity, tags)
 
 	s.Len(i.dictionary, 1)
 	s.InDelta(testRarity, i.selectRange[testId], 0.001)
 }
 
-func (s *InventorySuite) BuildSampleInventory() *Inventory {
+func BuildSampleInventory() *Inventory {
 	i := CreateInventory()
 
-	i.Add("Animal", "Aardvark", 1.0, Tags{"type": "mammal", "env": "ground", "family": "orycteropod"})
-	i.Add("Animal", "Boomalope", 2.0, Tags{"type": "cryptid", "env": "ground", "family": "deer"})
-	i.Add("Animal", "Capybara", 1.0, Tags{"type": "mammal", "env": "ground", "family": "rodent"})
-	i.Add("Animal", "Cladoselache", 2.5, Tags{"type": "fish", "env": "water", "family": "shark"})
+	i.AddToken("Animal", "Aardvark", 1.0, Tags{"type": "mammal", "env": "ground", "family": "orycteropod"})
+	i.AddToken("Animal", "Boomalope", 2.0, Tags{"type": "cryptid", "env": "ground", "family": "deer"})
+	i.AddToken("Animal", "Capybara", 1.0, Tags{"type": "mammal", "env": "ground", "family": "rodent"})
+	i.AddToken("Animal", "Cladoselache", 2.5, Tags{"type": "fish", "env": "water", "family": "shark"})
 
-	i.Add("Description", "Angry", 1.0, Tags{"tone": "negative"})
-	i.Add("Description", "Confused", 1.5, Tags{"tone": "negative"})
-	i.Add("Description", "Reluctant", 1.0, Tags{"tone": "neutral"})
-	i.Add("Description", "Happy", 2.5, Tags{"tone": "positive"})
+	i.AddToken("Description", "Angry", 1.0, Tags{"tone": "negative"})
+	i.AddToken("Description", "Confused", 1.5, Tags{"tone": "negative"})
+	i.AddToken("Description", "Reluctant", 1.0, Tags{"tone": "neutral"})
+	i.AddToken("Description", "Happy", 2.5, Tags{"tone": "positive"})
 
-	i.Add("AnimalType", "mammal", 3.0, Tags{})
-	i.Add("AnimalType", "fish", 1.2, Tags{})
-	i.Add("AnimalType", "cryptid", 3.0, Tags{})
+	i.AddToken("AnimalType", "mammal", 3.0, Tags{})
+	i.AddToken("AnimalType", "fish", 1.2, Tags{})
+	i.AddToken("AnimalType", "cryptid", 3.0, Tags{})
 
 	return i
 }
 
 func (s *InventorySuite) TestGetInstructions_Simple() {
-	i := s.BuildSampleInventory()
+	i := BuildSampleInventory()
 
 	x, r := i.getTokens(ParseSelector("Animal", ""))
 
@@ -79,7 +79,7 @@ func (s *InventorySuite) TestGetInstructions_Simple() {
 }
 
 func (s *InventorySuite) TestGetInstructions_SingleTag() {
-	i := s.BuildSampleInventory()
+	i := BuildSampleInventory()
 
 	x, r := i.getTokens(ParseSelector("Animal", "type=mammal"))
 
@@ -88,7 +88,7 @@ func (s *InventorySuite) TestGetInstructions_SingleTag() {
 }
 
 func (s *InventorySuite) TestGetInstructions_MultiTag() {
-	i := s.BuildSampleInventory()
+	i := BuildSampleInventory()
 
 	x, r := i.getTokens(ParseSelector("Description", "tone=negative"))
 
@@ -97,7 +97,7 @@ func (s *InventorySuite) TestGetInstructions_MultiTag() {
 }
 
 func (s *InventorySuite) TestGetInstructions_NotFound() {
-	i := s.BuildSampleInventory()
+	i := BuildSampleInventory()
 
 	x, r := i.getTokens(ParseSelector("ZipCode", ""))
 
@@ -106,26 +106,28 @@ func (s *InventorySuite) TestGetInstructions_NotFound() {
 }
 
 func (s *InventorySuite) TestPick_Simple() {
-	i := s.BuildSampleInventory()
+	i := BuildSampleInventory()
 	sel := ParseSelector("Animal", "")
-	c := i.PickValue(sel, 0)
+	c := i.Pick(sel, 0)
 
-	s.Equal("Aardvark", c)
+	s.NotNil(c)
+	s.Equal("Aardvark", c.Content)
 
-	c2 := i.PickValue(sel, 1.0)
-	s.Equal("Cladoselache", c2)
+	c2 := i.Pick(sel, 1.0)
+	s.NotNil(c2)
+	s.Equal("Cladoselache", c2.Content)
 }
 
 func (s *InventorySuite) TestPick_NoId() {
-	i := s.BuildSampleInventory()
-	c := i.PickValue(ParseSelector("ZipCode", ""), 0)
+	i := BuildSampleInventory()
+	c := i.Pick(ParseSelector("ZipCode", ""), 0)
 
-	s.Equal("", c)
+	s.Nil(c)
 }
 
 func (s *InventorySuite) TestPick_NoMatchingTags() {
-	i := s.BuildSampleInventory()
-	c := i.PickValue(ParseSelector("Animal", "type=bird"), 0)
+	i := BuildSampleInventory()
+	c := i.Pick(ParseSelector("Animal", "type=bird"), 0)
 
-	s.Equal("", c)
+	s.Nil(c)
 }

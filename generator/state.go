@@ -16,6 +16,8 @@
 
 package generator
 
+import "github.com/apex/log"
+
 type State struct {
 	Vars map[string]string
 }
@@ -29,5 +31,6 @@ func CreateState() *State {
 func (s *State) SetVars(v map[string]string) {
 	for varName, val := range v {
 		s.Vars[varName] = val
+		log.Infof("Set variable: %s=%s", varName, val)
 	}
 }

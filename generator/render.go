@@ -33,24 +33,12 @@ func init() {
 	varRegex = regexp.MustCompile(`\[\$(\w+)]`)
 }
 
-type Template struct {
-	working string
-	rounds  uint8
-}
-
-func InitTemplate(t string) *Template {
-	return &Template{
-		working: t,
-		rounds:  RoundsMax,
-	}
-}
-
-func (t *Template) replaceNextToken(i *Inventory, s *State, offset float64) bool {
+func replaceNextToken(working string, i *Inventory, s *State, source rng.RandomSource) (string, bool) {
 	// Find the next token
-	matches := selectorRegex.FindStringSubmatch(t.working)
+	matches := selectorRegex.FindStringSubmatch(working)
 
 	if matches == nil {
-		return false
+		return working, false
 	}
 
 	log.Infof("Found tokens: %#v", matches)
@@ -60,20 +48,21 @@ func (t *Template) replaceNextToken(i *Inventory, s *State, offset float64) bool
 
 	selector := ParseSelector(selectorId, selectorOptions)
 
-	tv := i.PickValue(selector, offset)
+	tv := i.Pick(selector, source.Next())
+	working = strings.Replace(working, fullMatch, tv.Content, 1)
+	s.SetVars(tv.SetVars)
 
-	t.working = strings.Replace(t.working, fullMatch, tv, 1)
-	log.Infof("Working value is now: %s", t.working)
+	log.Infof("Working value is now: %s", working)
 
-	return true
+	return working, true
 }
 
-func (t *Template) replaceNextVar(s *State) bool {
-	matches := varRegex.FindAllStringSubmatch(t.working, 20)
+func replaceNextVar(working string, s *State) (string, bool) {
+	matches := varRegex.FindAllStringSubmatch(working, 20)
 
 	if matches == nil {
 		log.Infof("Found no variable matches")
-		return false
+		return working, false
 	}
 
 	for _, m := range matches {
@@ -83,31 +72,35 @@ func (t *Template) replaceNextVar(s *State) bool {
 		val := s.Vars[varName]
 		log.Infof("Found Var reference: %s=%s", varName, val)
 		if val != "" {
-			t.working = strings.Replace(t.working, tag, val, 1)
-			return true
+			working = strings.Replace(working, tag, val, 1)
+			return working, true
 		}
 	}
 
-	return false
+	return working, false
 }
 
-func (t *Template) Render(i *Inventory, state *State, source rng.RandomSource) string {
+func Render(base string, i *Inventory, state *State, source rng.RandomSource) string {
 	replaced := true
+	rounds := RoundsMax
+	working := base
 
 	// Keep trying until there aren't changes or all the rounds are expended
-	for t.rounds > 0 {
+	for rounds > 0 {
 		// Try to replace tokens
-		replaced = t.replaceNextToken(i, state, source.Next())
+		working, replaced = replaceNextToken(working, i, state, source)
 
 		// Try to replace variables if no tokens were replaced
 		if !replaced {
-			replaced = t.replaceNextVar(state)
+			working, replaced = replaceNextVar(working, state)
 		}
 
 		if !replaced {
-			t.rounds -= 1
+			rounds = 0
+		} else {
+			rounds -= 1
 		}
 	}
 
-	return t.working
+	return working
 }

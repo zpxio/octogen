@@ -16,6 +16,8 @@
 
 package generator
 
+import "github.com/apex/log"
+
 type Inventory struct {
 	dictionary  map[string][]Token
 	selectRange map[string]float64
@@ -30,11 +32,19 @@ func CreateInventory() *Inventory {
 	return &i
 }
 
-func (i *Inventory) Add(id string, content string, rarity float64, tags map[string]string) {
+func (i *Inventory) AddToken(id string, content string, rarity float64, tags map[string]string) *Token {
 	x := BuildToken(id, content, rarity, tags)
 
-	i.dictionary[id] = append(i.dictionary[id], x)
-	i.selectRange[id] = rarity + i.selectRange[id]
+	i.Add(x)
+
+	return &x
+}
+
+func (i *Inventory) Add(t Token) *Token {
+	i.dictionary[t.Id] = append(i.dictionary[t.Id], t)
+	i.selectRange[t.Id] += t.Rarity
+
+	return &t
 }
 
 func (i *Inventory) getTokens(selector *Selector) ([]Token, float64) {
@@ -61,20 +71,22 @@ func (i *Inventory) getTokens(selector *Selector) ([]Token, float64) {
 	return taggedList, selectRange
 }
 
-func (i *Inventory) PickValue(selector *Selector, offset float64) string {
+func (i *Inventory) Pick(selector *Selector, offset float64) *Token {
 	taggedList, selectRange := i.getTokens(selector)
+	log.Infof("Selected tokens: %#v", taggedList)
 
 	// Pick the first value that exceeds the offset value
 	selectValue := offset * selectRange
-	var lastContent = ""
+	log.Infof("Selecting Weight Index: %f", selectValue)
+	var lastToken *Token = nil
 
 	for len(taggedList) > 0 && selectValue >= 0 {
-		top := taggedList[0]
+		lastToken = &taggedList[0]
 		taggedList = taggedList[1:]
 
-		lastContent = top.Content
-		selectValue -= top.Rarity
+		selectValue -= lastToken.Rarity
+		log.Infof("Now selecting up to: %f", selectValue)
 	}
 
-	return lastContent
+	return lastToken
 }
