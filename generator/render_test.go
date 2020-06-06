@@ -30,29 +30,9 @@ func TestRenderSuite(t *testing.T) {
 	suite.Run(t, new(RenderSuite))
 }
 
-func (s *RenderSuite) buildSampleInventory() *Inventory {
-	i := CreateInventory()
-
-	i.AddToken("Animal", "Aardvark", 1.0, Tags{"type": "mammal", "env": "ground", "family": "orycteropod"})
-	i.AddToken("Animal", "Boomalope", 2.0, Tags{"type": "cryptid", "env": "ground", "family": "deer"})
-	i.AddToken("Animal", "Capybara", 1.0, Tags{"type": "mammal", "env": "ground", "family": "rodent"})
-	i.AddToken("Animal", "Cladoselache", 1.0, Tags{"type": "fish", "env": "water", "family": "shark"})
-
-	i.AddToken("Description", "Angry", 1.0, Tags{"tone": "negative"})
-	i.AddToken("Description", "Confused", 1.5, Tags{"tone": "negative"})
-	i.AddToken("Description", "Reluctant", 1.0, Tags{"tone": "neutral"})
-	i.AddToken("Description", "Happy", 2.5, Tags{"tone": "positive"})
-
-	i.AddToken("AnimalType", "mammal", 3.0, Tags{})
-	i.AddToken("AnimalType", "fish", 1.2, Tags{})
-	i.AddToken("AnimalType", "cryptid", 3.0, Tags{})
-
-	return i
-}
-
 func (s *RenderSuite) TestReplaceNextToken() {
 	t := "Example: [Animal]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 
 	working, replaced := replaceNextToken(t, i, x, rng.UseStatic(0))
@@ -63,7 +43,7 @@ func (s *RenderSuite) TestReplaceNextToken() {
 
 func (s *RenderSuite) TestReplaceNextToken_Multiple() {
 	t := "Example: [Description] [Animal]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 
 	working, replaced := replaceNextToken(t, i, x, rng.UseStatic(0))
@@ -78,7 +58,7 @@ func (s *RenderSuite) TestReplaceNextToken_Multiple() {
 
 func (s *RenderSuite) TestReplaceNextToken_Tagged() {
 	t := "Example: [Animal:family=rodent]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 
 	working, replaced := replaceNextToken(t, i, x, rng.UseStatic(0))
@@ -89,7 +69,7 @@ func (s *RenderSuite) TestReplaceNextToken_Tagged() {
 
 func (s *RenderSuite) TestReplaceNextToken_Nested() {
 	t := "Example: [Animal:type=[AnimalType]]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 
 	working, replaced := replaceNextToken(t, i, x, rng.UseStatic(1))
@@ -100,7 +80,7 @@ func (s *RenderSuite) TestReplaceNextToken_Nested() {
 
 func (s *RenderSuite) TestReplaceNextToken_NoToken() {
 	t := "Example: Done"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 
 	working, replaced := replaceNextToken(t, i, x, rng.UseStatic(1))
@@ -147,7 +127,7 @@ func (s *RenderSuite) TestReplaceNextVar_UndefinedVar() {
 
 func (s *RenderSuite) TestRender() {
 	t := "Example: [Animal:type=[AnimalType]]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 
 	result := Render(t, i, CreateState(), rng.UseStatic(0))
 
@@ -156,7 +136,7 @@ func (s *RenderSuite) TestRender() {
 
 func (s *RenderSuite) TestRender_WithVar() {
 	t := "Example: [Animal:type=[$type]]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 	x.Vars["type"] = "mammal"
 
@@ -167,7 +147,7 @@ func (s *RenderSuite) TestRender_WithVar() {
 
 func (s *RenderSuite) TestRender_MultipleRender() {
 	t := "Example: [Animal:type=[$type]]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 	x := CreateState()
 	x.Vars["type"] = "mammal"
 
@@ -180,7 +160,7 @@ func (s *RenderSuite) TestRender_MultipleRender() {
 
 func (s *RenderSuite) TestRender_WithVarSet() {
 	t := "Example: [Animal:family=ape] Sentience: [$sentience]"
-	i := s.buildSampleInventory()
+	i := BuildSampleInventory()
 
 	t1 := i.AddToken("Animal", "Human", 1.0, Tags{"type": "mammal", "env": "land", "family": "ape"})
 	t1.OnRenderSet("human", "normal")
